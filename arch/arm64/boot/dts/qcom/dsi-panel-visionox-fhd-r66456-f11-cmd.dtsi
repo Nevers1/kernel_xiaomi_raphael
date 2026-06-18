@@ -62,7 +62,6 @@
 
 		qcom,disp-fod-off-dimming-delay = <85>;
 		qcom,disp-fod-dim-lut = <
-			/* brightness, alpha */
 			1 239
 			9 233
 			21 226
@@ -99,7 +98,6 @@
 			2047 31
 		>;
 		qcom,disp-dc-dim-lut = <
-			/* brightness, alpha */
 			1 205
 			23 191
 			45 164
@@ -147,21 +145,14 @@
 					39 01 00 00 00 00 03 D4 00 8D
 					39 01 00 00 00 00 02 FA 0F
 					39 01 00 00 00 00 02 B0 80
-					/* NVM load control */
 					39 01 00 00 00 00 02 E6 00
-					/* TE Control*/
 					39 01 00 00 00 00 02 35 00
-					/* SET Column Start Adress*/
 					39 01 00 00 00 00 05 2A 00 00 04 37
-					/* SET Row Start Adress*/
 					39 01 00 00 00 00 05 2B 00 00 09 23
-					/* brightness control */
 					39 01 00 00 00 00 03 51 01 00
-					/* sleep out */
 					05 01 00 00 6E 00 02 11 00
-					/* display on */
 					05 01 00 00 00 00 02 29 00];
-					qcom,mdss-dsi-off-command = [
+				qcom,mdss-dsi-off-command = [
 					05 01 00 00 00 00 02 28 00
 					05 01 00 00 78 00 02 10 00];
 				qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
@@ -172,19 +163,69 @@
 				qcom,mdss-dsi-nolp-command-state = "dsi_lp_mode";
 
 				qcom,mdss-dsi-dispparam-hbm-fod-off-command = [
-					/* HBM off + Disable brightness dimming */
 					15 01 00 00 10 00 02 53 20
 				];
 				qcom,mdss-dsi-dispparam-hbm-fod-off-command-state = "dsi_hs_mode";
 				qcom,mdss-dsi-dispparam-hbm-fod-on-command = [
-					/* Test Key Enable: F0 */
 					39 00 00 00 00 00 03 F0 5A 5A
-					/* Elvss Dimming Setting */
 					15 00 00 00 00 00 02 B0 03
 					15 00 00 00 00 00 02 B7 C9
-					/* Test Key Disable: F0 */
 					39 00 00 00 00 00 03 F0 A5 A5
-					/* HBM on + Disable brightness dimming */
+					15 01 00 00 10 00 02 53 E0
+				];
+				qcom,mdss-dsi-dispparam-hbm-fod-on-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-timing-default;
+			};
+			timing@1{
+				qcom,mdss-dsi-panel-width = <1080>;
+				qcom,mdss-dsi-panel-height = <2340>;
+				qcom,mdss-dsi-h-front-porch = <44>;
+				qcom,mdss-dsi-h-back-porch = <44>;
+				qcom,mdss-dsi-h-pulse-width = <20>;
+				qcom,mdss-dsi-h-sync-skew = <0>;
+				qcom,mdss-dsi-h-sync-pulse = <0>;
+				qcom,mdss-dsi-v-back-porch = <44>;
+				qcom,mdss-dsi-v-front-porch = <44>;
+				qcom,mdss-dsi-v-pulse-width = <20>;
+				qcom,mdss-dsi-h-left-border = <0>;
+				qcom,mdss-dsi-h-right-border = <0>;
+				qcom,mdss-dsi-v-top-border = <0>;
+				qcom,mdss-dsi-v-bottom-border = <0>;
+				qcom,mdss-dsi-panel-framerate = <90>;
+				qcom,mdss-dsi-panel-clockrate = <1650000000>;
+				qcom,mdss-dsi-panel-jitter = <0x5 0x1>;
+				qcom,mdss-dsi-on-command = [
+					39 01 00 00 00 00 02 B0 00
+					39 01 00 00 00 00 2C BB 59 FF FF FF EF CF AB 87 63 3F 4A 48 46 44 42 40 3E 3C 3A 64 00 FF FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 00 02 02 42 00
+					39 01 00 00 00 00 03 D4 00 8D
+					39 01 00 00 00 00 02 FA 0F
+					39 01 00 00 00 00 02 B0 80
+					39 01 00 00 00 00 02 E6 00
+					39 01 00 00 00 00 02 35 00
+					39 01 00 00 00 00 05 2A 00 00 04 37
+					39 01 00 00 00 00 05 2B 00 00 09 23
+					39 01 00 00 00 00 03 51 01 00
+					05 01 00 00 6E 00 02 11 00
+					05 01 00 00 00 00 02 29 00];
+				qcom,mdss-dsi-off-command = [
+					05 01 00 00 00 00 02 28 00
+					05 01 00 00 78 00 02 10 00];
+				qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-off-command-state = "dsi_lp_mode";
+
+				qcom,mdss-dsi-nolp-command = [
+					39 00 00 00 00 00 02 88 00];
+				qcom,mdss-dsi-nolp-command-state = "dsi_lp_mode";
+
+				qcom,mdss-dsi-dispparam-hbm-fod-off-command = [
+					15 01 00 00 10 00 02 53 20
+				];
+				qcom,mdss-dsi-dispparam-hbm-fod-off-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-dispparam-hbm-fod-on-command = [
+					39 00 00 00 00 00 03 F0 5A 5A
+					15 00 00 00 00 00 02 B0 03
+					15 00 00 00 00 00 02 B7 C9
+					39 00 00 00 00 00 03 F0 A5 A5
 					15 01 00 00 10 00 02 53 E0
 				];
 				qcom,mdss-dsi-dispparam-hbm-fod-on-command-state = "dsi_hs_mode";

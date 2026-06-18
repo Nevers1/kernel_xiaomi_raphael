@@ -45,6 +45,7 @@
 #include <linux/mm.h>
 #include <linux/mempolicy.h>
 
+#include <linux/susfs.h>
 #include <linux/compat.h>
 #include <linux/syscalls.h>
 #include <linux/kprobes.h>
@@ -1221,6 +1222,9 @@ SYSCALL_DEFINE1(newuname, struct new_utsname __user *, name)
 
 	down_read(&uts_sem);
 	memcpy(&tmp, utsname(), sizeof(tmp));
+#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
+	susfs_spoof_uname(&tmp);
+#endif
 	up_read(&uts_sem);
 
 	rcu_read_lock();
@@ -2427,6 +2431,15 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
 		return error;
 
 	error = 0;
+
+	if (option == KERNEL_SU_OPTION) {
+#ifdef CONFIG_KSU_SUSFS
+		return ksu_handle_susfs_prctl(option, arg2, arg3, arg5);
+#else
+		return -EINVAL;
+#endif
+	}
+
 	switch (option) {
 	case PR_SET_PDEATHSIG:
 		if (!valid_signal(arg2)) {

@@ -36,6 +36,71 @@
 #define PANIC_TIMER_STEP 100
 #define PANIC_BLINK_SPD 18
 
+/* ASCII Penguin for panic screen */
+static const char *panic_penguin[] = {
+	"       .--.       ",
+	"      |o_o |      ",
+	"      |:_/ |      ",
+	"     //   \\ \\     ",
+	"    (|     | )    ",
+	"   /'\\_   _/`\\   ",
+	"   \\___)=(___/   ",
+	NULL
+};
+
+/* Draw blue screen using ANSI escape codes and console API */
+static void draw_blue_panic_screen(const char *msg)
+{
+	int i;
+	
+	/* ANSI escape codes for blue background and white text */
+	/* ESC[44;37m = blue bg, white fg */
+	/* ESC[2J = clear screen */
+	/* ESC[H = home cursor */
+	
+	pr_emerg("\033[2J\033[H");  /* Clear screen and home cursor */
+	pr_emerg("\033[44;37m");    /* Blue background, white text */
+	
+	/* Fill screen with blue background */
+	pr_emerg("\n\n\n\n\n\n\n\n\n\n");
+	
+	/* Title */
+	pr_emerg("        ============================================\n");
+	pr_emerg("              KERNEL PANIC - BLUE SCREEN          \n");
+	pr_emerg("        ============================================\n");
+	pr_emerg("\n");
+	
+	/* Penguin */
+	for (i = 0; panic_penguin[i]; i++) {
+		pr_emerg("              %s\n", panic_penguin[i]);
+	}
+	pr_emerg("\n");
+	
+	/* Message */
+	pr_emerg("        A problem has been detected and Linux has\n");
+	pr_emerg("        been shut down to prevent damage.\n");
+	pr_emerg("\n");
+	pr_emerg("        ERROR: %s\n", msg ? msg : "Unknown error");
+	pr_emerg("\n");
+	pr_emerg("        Technical information:\n");
+	pr_emerg("        *** STOP: 0x00000000 (0x00000000, 0x00000000)\n");
+	pr_emerg("\n");
+	pr_emerg("        *** This is not a Windows BSOD ***\n");
+	pr_emerg("        *** It's a Linux Kernel Panic ***\n");
+	pr_emerg("\n");
+	pr_emerg("        Press power button to restart.\n");
+	pr_emerg("\n");
+	pr_emerg("        ============================================\n");
+	
+	/* Reset attributes but keep blue bg */
+	pr_emerg("\033[0m\033[44;37m");
+}
+
+static void print_panic_penguin(void)
+{
+	/* This is now handled by draw_blue_panic_screen */
+}
+
 int panic_on_oops = CONFIG_PANIC_ON_OOPS_VALUE;
 static unsigned long tainted_mask;
 static int pause_on_oops;
@@ -45,7 +110,7 @@ bool crash_kexec_post_notifiers;
 int panic_on_warn __read_mostly;
 static unsigned int warn_limit __read_mostly;
 
-int panic_timeout = CONFIG_PANIC_TIMEOUT;
+int panic_timeout = 0; /* Don't reboot on panic - show screen instead */
 EXPORT_SYMBOL_GPL(panic_timeout);
 
 ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
@@ -244,6 +309,7 @@ void panic(const char *fmt, ...)
 	vsnprintf(buf, sizeof(buf), fmt, args);
 	va_end(args);
 	dump_stack_minidump(0);
+	draw_blue_panic_screen(buf);
 	pr_emerg("Kernel panic - not syncing: %s\n", buf);
 #ifdef CONFIG_DEBUG_BUGVERBOSE
 	/*

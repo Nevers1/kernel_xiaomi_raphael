@@ -79,7 +79,10 @@ int vfs_statfs(const struct path *path, struct kstatfs *buf)
 
 	mnt = real_mount(path->mnt);
 	if (likely(susfs_is_current_proc_umounted())) {
-		for (; mnt->mnt_id >= DEFAULT_KSU_MNT_ID; mnt = mnt->mnt_parent) {}
+		for (; mnt->mnt_id >= DEFAULT_KSU_MNT_ID; mnt = mnt->mnt_parent) {
+			if (mnt == mnt->mnt_parent)
+				break;
+		}
 	}
 	error = statfs_by_dentry(mnt->mnt.mnt_root, buf);
 	if (!error)
