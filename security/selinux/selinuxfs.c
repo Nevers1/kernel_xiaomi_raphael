@@ -611,8 +611,11 @@ static ssize_t sel_write_context(struct file *file, char *buf, size_t size)
 		goto out;
 
 	length = security_context_to_sid(state, buf, size, &sid, GFP_KERNEL);
-	if (length)
+	if (length) {
+		pr_err("KSUDBG context_check FAILED: %.*s len=%zu err=%zd\n",
+			(int)size, buf, size, length);
 		goto out;
+	}
 
 	length = security_sid_to_context(state, sid, &canon, &len);
 	if (length)
